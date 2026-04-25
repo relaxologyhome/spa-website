@@ -1,0 +1,758 @@
+/**
+ * Relaxology Home Support - Luxury Spa Design
+ * Color Palette: Deep Green with Gold Accents
+ */
+
+:root {
+    /* Primary Colors */
+    --deep-green: #1a4d3e;
+    --forest-green: #2d6a52;
+    --light-green: #4a9b6f;
+    --gold: #d4af37;
+    --light-gold: #e6d5a8;
+    
+    /* Neutral Colors */
+    --white: #ffffff;
+    --light-gray: #f5f5f5;
+    --medium-gray: #d0d0d0;
+    --dark-gray: #333333;
+    
+    /* Spacing */
+    --spacing-unit: 1rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 2rem;
+    --spacing-lg: 3rem;
+    --spacing-xl: 4rem;
+    
+    /* Typography */
+    --font-primary: 'Georgia', serif;
+    --font-secondary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-secondary);
+    color: var(--dark-gray);
+    background-color: var(--white);
+    line-height: 1.6;
+}
+
+/* ============================================================================
+   TYPOGRAPHY
+   ============================================================================ */
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-primary);
+    color: var(--deep-green);
+    margin-bottom: var(--spacing-md);
+}
+
+.section-title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+    position: relative;
+    padding-bottom: var(--spacing-md);
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(to right, var(--gold), var(--light-gold), var(--gold));
+    border-radius: 2px;
+}
+
+/* ============================================================================
+   LAYOUT UTILITIES
+   ============================================================================ */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+/* ============================================================================
+   NAVIGATION
+   ============================================================================ */
+
+.navbar {
+    background-color: var(--deep-green);
+    padding: var(--spacing-md) 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: var(--shadow-md);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-sm);
+}
+
+.logo h1 {
+    color: var(--gold);
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.logo .tagline {
+    color: var(--light-gold);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: var(--spacing-lg);
+}
+
+.nav-link {
+    color: var(--light-gold);
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+    position: relative;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--gold);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--gold);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    width: 100%;
+}
+
+/* ============================================================================
+   HERO SECTION
+   ============================================================================ */
+
+.hero {
+    background: linear-gradient(135deg, var(--deep-green) 0%, var(--forest-green) 100%);
+    color: var(--white);
+    padding: var(--spacing-xl) var(--spacing-md);
+    text-align: center;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 500px;
+    height: 500px;
+    background: rgba(212, 175, 55, 0.05);
+    border-radius: 50%;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    margin-bottom: var(--spacing-md);
+    color: var(--light-gold);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero-subtitle {
+    font-size: 1.8rem;
+    margin-bottom: var(--spacing-md);
+    color: var(--white);
+}
+
+.hero-description {
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-lg);
+    color: var(--light-gray);
+    line-height: 1.8;
+}
+
+.cta-button {
+    background-color: var(--gold);
+    color: var(--deep-green);
+    border: none;
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
+}
+
+.cta-button:hover {
+    background-color: var(--light-gold);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* ============================================================================
+   SERVICES SECTION
+   ============================================================================ */
+
+.services {
+    background-color: var(--light-gray);
+    padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.service-card {
+    background-color: var(--white);
+    border-left: 5px solid var(--gold);
+    padding: var(--spacing-lg);
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.service-card h3 {
+    color: var(--deep-green);
+    font-size: 1.8rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.service-features {
+    list-style: none;
+    margin-bottom: var(--spacing-md);
+}
+
+.service-features li {
+    padding: 0.5rem 0;
+    color: var(--forest-green);
+    font-size: 1rem;
+}
+
+.service-target {
+    color: var(--forest-green);
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+}
+
+.service-price {
+    color: var(--gold);
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.service-highlights {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.highlight {
+    background-color: var(--white);
+    padding: var(--spacing-md);
+    border-radius: 8px;
+    border-top: 3px solid var(--gold);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.highlight h4 {
+    color: var(--deep-green);
+    margin-bottom: var(--spacing-sm);
+}
+
+.highlight p {
+    color: var(--forest-green);
+}
+
+/* ============================================================================
+   ABOUT SECTION
+   ============================================================================ */
+
+.about {
+    padding: var(--spacing-xl) var(--spacing-md);
+    background-color: var(--white);
+}
+
+.therapist-card {
+    background: linear-gradient(135deg, rgba(42, 106, 82, 0.05) 0%, rgba(212, 175, 55, 0.05) 100%);
+    border: 2px solid var(--forest-green);
+    border-radius: 12px;
+    padding: var(--spacing-lg);
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.therapist-info h3 {
+    font-size: 2rem;
+    color: var(--deep-green);
+    margin-bottom: var(--spacing-sm);
+}
+
+.therapist-title {
+    color: var(--gold);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+}
+
+.certifications {
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-md);
+    background-color: var(--light-gray);
+    border-radius: 8px;
+    border-left: 4px solid var(--gold);
+}
+
+.certifications h4 {
+    color: var(--deep-green);
+    margin-bottom: var(--spacing-md);
+}
+
+.certifications ul {
+    list-style: none;
+}
+
+.certifications li {
+    padding: 0.5rem 0;
+    color: var(--forest-green);
+}
+
+.hygiene-commitment {
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-md);
+    background-color: rgba(74, 155, 111, 0.1);
+    border-radius: 8px;
+    border-left: 4px solid var(--light-green);
+}
+
+.hygiene-commitment h4 {
+    color: var(--deep-green);
+    margin-bottom: var(--spacing-md);
+}
+
+.hygiene-commitment p {
+    margin-bottom: var(--spacing-sm);
+    color: var(--forest-green);
+    line-height: 1.8;
+}
+
+/* ============================================================================
+   REVIEWS SECTION
+   ============================================================================ */
+
+.reviews {
+    background: linear-gradient(135deg, var(--forest-green) 0%, var(--deep-green) 100%);
+    padding: var(--spacing-xl) var(--spacing-md);
+    color: var(--white);
+}
+
+.reviews .section-title {
+    color: var(--light-gold);
+}
+
+.reviews .section-title::after {
+    background: linear-gradient(to right, var(--light-gold), var(--white), var(--light-gold));
+}
+
+.reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.review-card {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--light-gold);
+    padding: var(--spacing-lg);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.review-rating {
+    color: var(--light-gold);
+    font-size: 1.2rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.review-comment {
+    font-style: italic;
+    color: var(--light-gray);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.8;
+}
+
+.review-author {
+    color: var(--light-gold);
+    font-weight: 600;
+}
+
+.review-location {
+    color: var(--medium-gray);
+    font-size: 0.9rem;
+}
+
+.loading {
+    text-align: center;
+    color: var(--light-gold);
+    font-size: 1.1rem;
+}
+
+/* ============================================================================
+   BOOKING SECTION
+   ============================================================================ */
+
+.booking {
+    background-color: var(--light-gray);
+    padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.booking-subtitle {
+    text-align: center;
+    color: var(--forest-green);
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-lg);
+}
+
+.booking-form {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: var(--white);
+    padding: var(--spacing-lg);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    border-top: 4px solid var(--gold);
+}
+
+/* ============================================================================
+   FEEDBACK SECTION
+   ============================================================================ */
+
+.feedback {
+    background-color: var(--white);
+    padding: var(--spacing-xl) var(--spacing-md);
+    border-top: 2px solid var(--light-green);
+}
+
+.feedback-subtitle {
+    text-align: center;
+    color: var(--forest-green);
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-lg);
+}
+
+.feedback-form {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: var(--light-gray);
+    padding: var(--spacing-lg);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    border-top: 4px solid var(--light-green);
+}
+
+/* ============================================================================
+   FORM STYLES
+   ============================================================================ */
+
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    color: var(--deep-green);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--medium-gray);
+    border-radius: 6px;
+    font-family: var(--font-secondary);
+    font-size: 1rem;
+    color: var(--dark-gray);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.error-message {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    display: block;
+    margin-top: 0.25rem;
+}
+
+.char-count {
+    display: block;
+    text-align: right;
+    font-size: 0.85rem;
+    color: var(--forest-green);
+    margin-top: 0.25rem;
+}
+
+/* Star Rating */
+.star-rating {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    font-size: 2.5rem;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+    margin: 0;
+}
+
+.star-rating input:checked ~ label,
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+    opacity: 1;
+    color: var(--gold);
+}
+
+/* Buttons */
+.submit-button {
+    width: 100%;
+    background: linear-gradient(135deg, var(--deep-green), var(--forest-green));
+    color: var(--white);
+    border: none;
+    padding: var(--spacing-md);
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: var(--spacing-md);
+}
+
+.submit-button:hover {
+    background: linear-gradient(135deg, var(--forest-green), var(--light-green));
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.submit-button:active {
+    transform: translateY(0);
+}
+
+.booking-message,
+.feedback-message {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-radius: 6px;
+    display: none;
+    text-align: center;
+}
+
+.booking-message.show,
+.feedback-message.show {
+    display: block;
+}
+
+.booking-message.success,
+.feedback-message.success {
+    background-color: #c8e6c9;
+    color: #2e7d32;
+    border-left: 4px solid #2e7d32;
+}
+
+.booking-message.error,
+.feedback-message.error {
+    background-color: #ffcdd2;
+    color: #c62828;
+    border-left: 4px solid #c62828;
+}
+
+/* ============================================================================
+   FOOTER
+   ============================================================================ */
+
+.footer {
+    background: linear-gradient(135deg, var(--deep-green) 0%, var(--forest-green) 100%);
+    color: var(--light-gold);
+    text-align: center;
+    padding: var(--spacing-xl) var(--spacing-md);
+    margin-top: var(--spacing-xl);
+}
+
+.footer p {
+    margin-bottom: var(--spacing-sm);
+}
+
+.footer a {
+    color: var(--gold);
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.3rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .nav-menu {
+        gap: var(--spacing-md);
+        font-size: 0.9rem;
+    }
+
+    .nav-container {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .service-highlights {
+        grid-template-columns: 1fr;
+    }
+
+    .reviews-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero {
+        min-height: 400px;
+    }
+
+    .star-rating {
+        gap: var(--spacing-sm);
+    }
+
+    .star-rating label {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --spacing-lg: 2rem;
+        --spacing-xl: 2.5rem;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .service-features li {
+        font-size: 0.9rem;
+    }
+
+    .cta-button {
+        padding: var(--spacing-md) var(--spacing-md);
+        font-size: 1rem;
+    }
+
+    .nav-link {
+        font-size: 0.85rem;
+    }
+}

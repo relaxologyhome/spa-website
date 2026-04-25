@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relaxology Home Support - Premium Mobile Spa Services</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h1>Relaxology</h1>
+                <p class="tagline">Home Support</p>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#services" class="nav-link">Services</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#reviews" class="nav-link">Reviews</a></li>
+                <li><a href="#booking" class="nav-link">Book Now</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">A Curated Therapeutic Sanctuary</h1>
+            <p class="hero-subtitle">Specialized Deep Tissue & Aromatic Oil Relief, Exclusively for Women</p>
+            <p class="hero-description">We bring the sanctuary to your doorstep. Certified professional therapy targeting tension and chronic pain with unparalleled hygiene and absolute boundary respect.</p>
+            <button class="cta-button" onclick="scrollToSection('booking')">Book Your Session</button>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <h3>60-Minute Signature Deep Tissue & Oil Therapy</h3>
+                    <ul class="service-features">
+                        <li>✓ Professional Deep Tissue Massage</li>
+                        <li>✓ Curated Aromatic Oil Blend</li>
+                        <li>✓ Complimentary Oil Blend Gift</li>
+                        <li>✓ Spotless Equipment Setup</li>
+                        <li>✓ Professional Sanitization</li>
+                        <li>✓ Absolute Boundary Respect</li>
+                    </ul>
+                    <p class="service-target"><strong>Target Areas:</strong> Laptop Neck, Chronic Pain, Muscle Tension</p>
+                    <p class="service-price">Contact for personalized quote</p>
+                </div>
+            </div>
+            <div class="service-highlights">
+                <div class="highlight">
+                    <h4>📍 Service Area</h4>
+                    <p>Chennai (Primary) | Gachibowli, Hyderabad (Legacy)</p>
+                </div>
+                <div class="highlight">
+                    <h4>📅 Availability</h4>
+                    <p>Weekend Sessions (Saturday & Sunday)</p>
+                </div>
+                <div class="highlight">
+                    <h4>👩‍⚕️ Therapist</h4>
+                    <p>Certified Expert Therapist Mani</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title">Meet Your Therapist</h2>
+            <div class="therapist-card">
+                <div class="therapist-info">
+                    <h3>Certified Expert Therapist Mani</h3>
+                    <p class="therapist-title">Premium Wellness Therapist | Deep Tissue & Aromatherapy Specialist</p>
+                    
+                    <div class="certifications">
+                        <h4>Certifications & Expertise:</h4>
+                        <ul>
+                            <li>✓ Professional Conduct & Boundaries Certification</li>
+                            <li>✓ Advanced Deep Tissue Massage</li>
+                            <li>✓ Aromatherapy Specialist</li>
+                            <li>✓ Chronic Pain Management</li>
+                            <li>✓ Women's Wellness Focus</li>
+                        </ul>
+                    </div>
+
+                    <div class="hygiene-commitment">
+                        <h4>Our Hygiene & Boundary Commitment:</h4>
+                        <p>🧼 <strong>Spotless Equipment:</strong> Professional folding table setup with pristine conditions</p>
+                        <p>🛡️ <strong>Professional Sanitization:</strong> Medical-grade sanitizing supplies for complete safety</p>
+                        <p>🤝 <strong>Absolute Boundary Respect:</strong> Your comfort and preferences are our priority</p>
+                        <p>👩‍⚕️ <strong>Women's Wellness Focus:</strong> Tailored services exclusively for women's therapeutic needs</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section id="reviews" class="reviews">
+        <div class="container">
+            <h2 class="section-title">Client Testimonials</h2>
+            <div id="reviews-container" class="reviews-grid">
+                <!-- Reviews will be loaded here via JavaScript -->
+                <p class="loading">Loading testimonials...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section id="booking" class="booking">
+        <div class="container">
+            <h2 class="section-title">Book Your Appointment</h2>
+            <p class="booking-subtitle">Schedule your personalized deep tissue & aromatic oil therapy session</p>
+            
+            <form id="booking-form" class="booking-form" onsubmit="handleBookingSubmit(event)">
+                <div class="form-group">
+                    <label for="clientName">Your Name *</label>
+                    <input type="text" id="clientName" name="clientName" required placeholder="Enter your full name">
+                    <span class="error-message" id="error-clientName"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="contactNumber">WhatsApp Contact Number *</label>
+                    <input type="tel" id="contactNumber" name="contactNumber" required placeholder="Enter 10-digit number" pattern="[0-9]{10}">
+                    <span class="error-message" id="error-contactNumber"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="addressArea">Your Area in Chennai *</label>
+                    <input type="text" id="addressArea" name="addressArea" required placeholder="e.g., Adyar, Alwarpet, Besant Nagar">
+                    <span class="error-message" id="error-addressArea"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="serviceType">Service Type *</label>
+                    <select id="serviceType" name="serviceType" required>
+                        <option value="">Select a service</option>
+                        <option value="60-min-signature">60-Minute Signature Deep Tissue & Oil Therapy</option>
+                    </select>
+                    <span class="error-message" id="error-serviceType"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="preferredDate">Preferred Date (Weekend Only) *</label>
+                    <input type="date" id="preferredDate" name="preferredDate" required>
+                    <span class="error-message" id="error-preferredDate"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="preferredTime">Preferred Time *</label>
+                    <select id="preferredTime" name="preferredTime" required>
+                        <option value="">Select a time</option>
+                        <option value="09:00">09:00 AM</option>
+                        <option value="10:00">10:00 AM</option>
+                        <option value="11:00">11:00 AM</option>
+                        <option value="12:00">12:00 PM</option>
+                        <option value="14:00">02:00 PM</option>
+                        <option value="15:00">03:00 PM</option>
+                        <option value="16:00">04:00 PM</option>
+                        <option value="17:00">05:00 PM</option>
+                        <option value="18:00">06:00 PM</option>
+                    </select>
+                    <span class="error-message" id="error-preferredTime"></span>
+                </div>
+
+                <button type="submit" class="submit-button">Confirm Booking</button>
+                <div id="booking-message" class="booking-message"></div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Feedback Section -->
+    <section class="feedback">
+        <div class="container">
+            <h2 class="section-title">Share Your Experience</h2>
+            <p class="feedback-subtitle">Help us serve you better by sharing your feedback</p>
+            
+            <form id="feedback-form" class="feedback-form" onsubmit="handleFeedbackSubmit(event)">
+                <div class="form-group">
+                    <label for="feedbackName">Your Name *</label>
+                    <input type="text" id="feedbackName" name="clientName" required placeholder="Enter your name">
+                    <span class="error-message" id="error-feedbackName"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="feedbackLocation">Your Area in Chennai *</label>
+                    <input type="text" id="feedbackLocation" name="location" required placeholder="e.g., Adyar, Alwarpet">
+                    <span class="error-message" id="error-feedbackLocation"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="feedbackRating">Rate Your Experience (1-5 Stars) *</label>
+                    <div class="star-rating">
+                        <input type="radio" id="star5" name="rating" value="5" required>
+                        <label for="star5">⭐</label>
+                        <input type="radio" id="star4" name="rating" value="4">
+                        <label for="star4">⭐</label>
+                        <input type="radio" id="star3" name="rating" value="3">
+                        <label for="star3">⭐</label>
+                        <input type="radio" id="star2" name="rating" value="2">
+                        <label for="star2">⭐</label>
+                        <input type="radio" id="star1" name="rating" value="1">
+                        <label for="star1">⭐</label>
+                    </div>
+                    <span class="error-message" id="error-feedbackRating"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="feedbackComment">Your Feedback *</label>
+                    <textarea id="feedbackComment" name="comment" required placeholder="Share your experience (10-500 characters)" rows="5"></textarea>
+                    <span class="char-count">0/500</span>
+                    <span class="error-message" id="error-feedbackComment"></span>
+                </div>
+
+                <button type="submit" class="submit-button">Submit Feedback</button>
+                <div id="feedback-message" class="feedback-message"></div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Relaxology Home Support. All rights reserved.</p>
+            <p>Premium Mobile Spa Services | Certified Expert Therapist Mani</p>
+            <p>Chennai (Primary) | Gachibowli, Hyderabad (Legacy)</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
