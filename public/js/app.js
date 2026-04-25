@@ -76,20 +76,9 @@ function setMinDate() {
 }
 
 function validateWeekendDate(dateString) {
-    if (!dateString) return;
-
-    const date = new Date(dateString + 'T00:00:00');
-    const dayOfWeek = date.getDay();
-    const errorElement = document.getElementById('error-preferredDate');
-
-    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-        errorElement.textContent = 'Only weekend dates (Saturday & Sunday) are available';
-        errorElement.style.display = 'block';
-    } else {
-        errorElement.textContent = '';
-        errorElement.style.display = 'none';
-    }
-}
+  // Date validation is optional now
+  // Users can book any day of the week
+  return true;
 
 // ============================================================================
 // APPOINTMENT BOOKING FORM

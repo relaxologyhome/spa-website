@@ -1,7 +1,7 @@
 /**
  * Relaxology Home Support - Express.js Backend
  * A curated therapeutic sanctuary for women's deep tissue and aromatic oil relief
- * Service provided by Certified Expert Therapist Mani
+  * Service provided by Certified Expert Therapist
  */
 
 const express = require('express');
@@ -69,9 +69,9 @@ app.get('/api/home-data', (req, res) => {
     spaName: "Relaxology Home Support",
     tagline: "A curated therapeutic sanctuary, specialized deep tissue, and aromatic oil relief",
     mission: "Exclusively for women. We target tension and chronic pain with unparalleled professional hygiene and absolute boundary respect.",
-    locations: ["Chennai (Primary)", "Gachibowli, Hyderabad (Legacy)"],
+    locations: ["Chennai", "Bangalore", "Hyderabad"],
     therapist: {
-      name: "Certified Expert Therapist Mani",
+      name: "Certified Expert Therapist",
       certifications: ["Professional Conduct & Boundaries Certified", "Deep Tissue Therapy Specialist"],
       experience: "Expert"
     },
@@ -91,12 +91,62 @@ app.get('/api/services', (req, res) => {
       description: "Our flagship service combining professional deep tissue massage with curated aromatic oils targeting chronic tension and pain relief.",
       duration: "60 minutes",
       includes: [
-        "Spotless Folding Table Setup",
-        "Professional Sanitizing Supplies",
+        "Professional Deep Tissue Massage",
+        "Curated Aromatic Oil Blend",
         "Complimentary Aromatic Oil Blend Gift",
-        "Strict Hygiene Protocols"
+        "Spotless Equipment Setup",
+        "Professional Sanitization",
+        "Absolute Boundary Respect"
       ],
       targetAreas: ["Laptop neck", "Chronic pain", "Muscle tension"],
+      price: "Contact for quote"
+    },
+    {
+      id: 2,
+      title: "60-Minute Stress-Relief & Scalp Therapy",
+      description: "Specialized therapy for mental clarity, headache relief, and upper body tension management.",
+      duration: "60 minutes",
+      includes: [
+        "Deep Scalp Stimulation",
+        "Neck & Shoulder Release",
+        "Lavender-Infused Essential Oils",
+        "Warm Towel Compression",
+        "Professional Sanitization",
+        "Absolute Boundary Respect"
+      ],
+      targetAreas: ["Tension headaches", "Shoulder stiffness", "Mental burnout"],
+      price: "Contact for quote"
+    },
+    {
+      id: 3,
+      title: "75-Minute Revitalizing Foot & Leg Reflexology",
+      description: "Circulation and relief for those who are on their feet all day with therapeutic foot care.",
+      duration: "75 minutes",
+      includes: [
+        "Therapeutic Foot Soak",
+        "Targeted Reflexology",
+        "Cooling Mint & Eucalyptus Blend",
+        "Lower Limb Drainage",
+        "Complimentary Travel-Size Foot Balm",
+        "Spotless Equipment Setup"
+      ],
+      targetAreas: ["Tired feet", "Leg swelling", "Poor circulation"],
+      price: "Contact for quote"
+    },
+    {
+      id: 4,
+      title: "90-Minute Glow-Up Full Body Polishing",
+      description: "Skin exfoliation, hydration, and deep relaxation for a radiant, glowing finish.",
+      duration: "90 minutes",
+      includes: [
+        "Gentle Body Scrub",
+        "Signature Oil Massage",
+        "Skin Brightening Serum Application",
+        "Deep Hydration Mask",
+        "Full Kit Provision with Premium Linens",
+        "Professional & Secure Sanctuary"
+      ],
+      targetAreas: ["Dull skin", "Dry texture", "Total body relaxation"],
       price: "Contact for quote"
     }
   ];
@@ -108,7 +158,7 @@ app.get('/api/services', (req, res) => {
  */
 app.get('/api/therapist-info', (req, res) => {
   const therapistInfo = {
-    name: "Certified Expert Therapist Mani",
+    name: "Certified Expert Therapist",
     title: "Premium Wellness Therapist",
     specialty: "Deep Tissue & Aromatic Oil Therapy",
     certifications: [
@@ -152,7 +202,7 @@ app.get('/api/reviews', (req, res) => {
 
 /**
  * Handle appointment booking form submission
- * Required Fields: Client Name, Contact Number (WhatsApp), Chennai Address Area,
+ * Required Fields: Client Name, Contact Number (WhatsApp), Address Area,
  * Service Type, Preferred Weekend Date/Time
  */
 app.post('/api/book-appointment', (req, res) => {
@@ -170,7 +220,7 @@ app.post('/api/book-appointment', (req, res) => {
   }
   
   if (!addressArea || addressArea.trim() === '') {
-    errors.push('Chennai Address Area is required');
+    errors.push('Address Area is required');
   }
   
   if (!serviceType || serviceType === '') {
@@ -194,14 +244,14 @@ app.post('/api/book-appointment', (req, res) => {
     });
   }
 
-  // Validate weekend date
+  // Validate date is not in the past
   const bookingDate = new Date(preferredDate);
-  const dayOfWeek = bookingDate.getDay();
-  if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+  const today = new Date();
+  if (bookingDate < today) {
     return res.status(400).json({
       success: false,
-      message: 'Bookings are available on weekends (Saturday & Sunday) only',
-      errors: ['Only weekend dates are available']
+      message: 'Please select a future date',
+      errors: ['Date must be in the future']
     });
   }
 
@@ -226,7 +276,7 @@ app.post('/api/book-appointment', (req, res) => {
     success: true,
     message: 'Appointment booking received successfully!',
     confirmationCode: booking.confirmationCode,
-    nextSteps: 'Our therapist Mani will contact you via WhatsApp to confirm your appointment.',
+    nextSteps: 'Our therapist will contact you via WhatsApp to confirm your appointment.',
     booking: {
       name: booking.clientName,
       date: booking.preferredDate,
