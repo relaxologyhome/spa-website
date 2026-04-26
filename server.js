@@ -7,7 +7,35 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const nodemailer = require('nodemailer');
 const app = express();
+
+// ============================================================================
+// EMAIL CONFIGURATION
+// ============================================================================
+
+/**
+ * Email transporter configuration for Gmail
+ * Using Gmail App Password (not regular password) for security
+ * Set environment variables: GMAIL_USER and GMAIL_PASSWORD
+ */
+const emailTransporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER || 'relaxologyhome@gmail.com',
+    pass: process.env.GMAIL_PASSWORD || 'aBcde@123'
+  }
+});
+
+// Test email configuration on startup
+emailTransporter.verify((error, success) => {
+  if (error) {
+    console.warn('⚠️  Email configuration issue:', error.message);
+    console.log('   Email notifications will be disabled.');
+  } else {
+    console.log('✓ Email service configured and ready');
+  }
+});
 
 // ============================================================================
 // MIDDLEWARE CONFIGURATION
@@ -141,6 +169,171 @@ function cleanOldData() {
 
 // Run cleanup every 5 minutes
 setInterval(cleanOldData, 5 * 60 * 1000);
+
+// ============================================================================
+// EMAIL HELPER FUNCTIONS
+// ============================================================================
+
+/**
+ * Send appointment booking confirmation email
+ */
+async function sendBookingEmail(booking) {
+  try {
+    const mailOptions = {
+      from: 'relaxologyhome@gmail.com',
+      to: 'relaxologyhome@gmail.com',
+      subject: `📅 New Appointment Booking - ${booking.confirmationCode}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f9c6e8; border-radius: 8px; overflow: hidden;">
+          <div style="background: linear-gradient(135deg, #f94fa0 0%, #f27a93 100%); padding: 20px; color: white;">
+            <h1 style="margin: 0;">📅 New Appointment Booking</h1>
+          </div>
+          
+          <div style="padding: 30px; background-color: #f9f9f9;">
+            <h2 style="color: #f94fa0; margin-top: 0;">Booking Confirmation</h2>
+            <p><strong>Confirmation Code:</strong> <span style="color: #f94fa0; font-weight: bold;">${booking.confirmationCode}</span></p>
+            
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+            
+            <h3 style="color: #333;">Client Details</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Name:</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${booking.clientName}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Gender:</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${booking.gender}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Contact (WhatsApp):</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">+91${booking.contactNumber}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Address Area:</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${booking.addressArea}</td>
+              </tr>
+            </table>
+            
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+            
+            <h3 style="color: #333;">Service Details</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Service Type:</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${booking.serviceType}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Preferred Date:</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${booking.preferredDate}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Preferred Time:</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${booking.preferredTime}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Status:</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><span style="background-color: #fff3cd; padding: 4px 8px; border-radius: 4px; color: #856404;">${booking.status}</span></td>
+              </tr>
+            </table>
+            
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+            
+            <p style="color: #666; font-size: 14px;">
+              <strong>Next Step:</strong> Contact the client via WhatsApp at +91${booking.contactNumber} to confirm the appointment.
+            </p>
+          </div>
+          
+          <div style="background-color: #f5f5f5; padding: 20px; text-align: center; font-size: 12px; color: #999;">
+            <p>Relaxology Woman Spa - Premium Home Spa Services</p>
+            <p>© 2026 All Rights Reserved</p>
+          </div>
+        </div>
+      `
+    };
+
+    const info = await emailTransporter.sendMail(mailOptions);
+    console.log('✓ Booking email sent:', info.messageId);
+    return true;
+  } catch (error) {
+    console.error('✗ Error sending booking email:', error.message);
+    return false;
+  }
+}
+
+/**
+ * Send feedback submission email
+ */
+async function sendFeedbackEmail(feedback) {
+  try {
+    const stars = '⭐'.repeat(feedback.rating) + '☆'.repeat(5 - feedback.rating);
+    
+    const mailOptions = {
+      from: 'relaxologyhome@gmail.com',
+      to: 'relaxologyhome@gmail.com',
+      subject: `💬 New Feedback/Testimonial - ${feedback.rating}⭐ from ${feedback.clientName}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f9c6e8; border-radius: 8px; overflow: hidden;">
+          <div style="background: linear-gradient(135deg, #f94fa0 0%, #f27a93 100%); padding: 20px; color: white;">
+            <h1 style="margin: 0;">💬 New Testimonial Received</h1>
+          </div>
+          
+          <div style="padding: 30px; background-color: #f9f9f9;">
+            <h2 style="color: #f94fa0; margin-top: 0;">Client Feedback</h2>
+            
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+            
+            <h3 style="color: #333;">Rating & Details</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Client Name:</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${feedback.clientName}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Location:</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${feedback.location}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Rating:</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd; font-size: 18px;">${stars}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Status:</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><span style="background-color: #fff3cd; padding: 4px 8px; border-radius: 4px; color: #856404;">Pending Review</span></td>
+              </tr>
+            </table>
+            
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+            
+            <h3 style="color: #333;">Feedback Comment</h3>
+            <div style="background-color: white; padding: 15px; border-left: 4px solid #f9c6e8; border-radius: 4px; font-style: italic; color: #555;">
+              "${feedback.comment}"
+            </div>
+            
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+            
+            <p style="color: #666; font-size: 14px;">
+              <strong>Submission Date:</strong> ${new Date(feedback.submissionDate).toLocaleString('en-IN')}<br>
+              <strong>Feedback ID:</strong> ${feedback.id}
+            </p>
+          </div>
+          
+          <div style="background-color: #f5f5f5; padding: 20px; text-align: center; font-size: 12px; color: #999;">
+            <p>Relaxology Woman Spa - Premium Home Spa Services</p>
+            <p>© 2026 All Rights Reserved</p>
+          </div>
+        </div>
+      `
+    };
+
+    const info = await emailTransporter.sendMail(mailOptions);
+    console.log('✓ Feedback email sent:', info.messageId);
+    return true;
+  } catch (error) {
+    console.error('✗ Error sending feedback email:', error.message);
+    return false;
+  }
+}
 
 // ============================================================================
 // FUNCTION A: STANDARD WEB PRESENTATION (GET LOGIC)
@@ -368,6 +561,9 @@ app.post('/api/book-appointment', (req, res) => {
 
   bookings.push(booking);
 
+  // Send email notification to admin
+  sendBookingEmail(booking);
+
   // Mock success response
   res.json({
     success: true,
@@ -449,6 +645,9 @@ app.post('/api/submit-feedback', (req, res) => {
   };
 
   feedbackSubmissions.push(feedback);
+
+  // Send email notification to admin
+  sendFeedbackEmail(feedback);
 
   // Mock success response
   res.json({
