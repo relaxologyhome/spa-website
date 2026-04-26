@@ -166,6 +166,19 @@
                 </div>
 
                 <div class="form-group">
+                    <label>Gender *</label>
+                    <div class="radio-group">
+                        <input type="radio" id="genderFemale" name="gender" value="Female" required>
+                        <label for="genderFemale" class="radio-label">Female</label>
+                        <input type="radio" id="genderMale" name="gender" value="Male" required>
+                        <label for="genderMale" class="radio-label">Male</label>
+                        <input type="radio" id="genderOther" name="gender" value="Other" required>
+                        <label for="genderOther" class="radio-label">Other</label>
+                    </div>
+                    <span class="error-message" id="error-gender"></span>
+                </div>
+
+                <div class="form-group">
                     <label for="contactNumber">WhatsApp Contact Number *</label>
                     <input type="tel" id="contactNumber" name="contactNumber" required placeholder="Enter 10-digit number" pattern="[0-9]{10}">
                     <span class="error-message" id="error-contactNumber"></span>
@@ -173,7 +186,7 @@
 
                 <div class="form-group">
                     <label for="addressArea">Your Area (Chennai, Bangalore, or Hyderabad) *</label>
-                    <input type="text" id="addressArea" name="addressArea" required placeholder="e.g., Adyar, Alwarpet, Whitefield">
+                    <input type="text" id="addressArea" name="addressArea" required placeholder="e.g., Adyar, Jubilee Hills, Whitefield">
                     <span class="error-message" id="error-addressArea"></span>
                 </div>
 
@@ -233,7 +246,7 @@
 
                 <div class="form-group">
                     <label for="feedbackLocation">Your Area in Chennai *</label>
-                    <input type="text" id="feedbackLocation" name="location" required placeholder="e.g., Adyar, Alwarpet">
+                    <input type="text" id="feedbackLocation" name="location" required placeholder="e.g., Adyar, Jubilee Hills">
                     <span class="error-message" id="error-feedbackLocation"></span>
                 </div>
 

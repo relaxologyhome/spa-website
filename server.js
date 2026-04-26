@@ -206,13 +206,17 @@ app.get('/api/reviews', (req, res) => {
  * Service Type, Preferred Weekend Date/Time
  */
 app.post('/api/book-appointment', (req, res) => {
-  const { clientName, contactNumber, addressArea, serviceType, preferredDate, preferredTime } = req.body;
+  const { clientName, gender, contactNumber, addressArea, serviceType, preferredDate, preferredTime } = req.body;
 
   // Validation Logic
   const errors = [];
   
   if (!clientName || clientName.trim() === '') {
     errors.push('Client Name is required');
+  }
+  
+  if (!gender || gender === '') {
+    errors.push('Gender is required');
   }
   
   if (!contactNumber || !/^\d{10}$/.test(contactNumber.replace(/\D/g, ''))) {
@@ -259,6 +263,7 @@ app.post('/api/book-appointment', (req, res) => {
   const booking = {
     id: bookings.length + 1,
     clientName: clientName.trim(),
+    gender: gender,
     contactNumber: contactNumber,
     addressArea: addressArea.trim(),
     serviceType: serviceType,

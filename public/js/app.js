@@ -79,6 +79,7 @@ function validateWeekendDate(dateString) {
   // Date validation is optional now
   // Users can book any day of the week
   return true;
+}
 
 // ============================================================================
 // APPOINTMENT BOOKING FORM
@@ -95,6 +96,7 @@ async function handleBookingSubmit(event) {
 
     // Collect form data
     const clientName = document.getElementById('clientName').value;
+    const gender = document.querySelector('input[name="gender"]:checked').value;
     const contactNumber = document.getElementById('contactNumber').value;
     const addressArea = document.getElementById('addressArea').value;
     const serviceType = document.getElementById('serviceType').value;
@@ -104,6 +106,7 @@ async function handleBookingSubmit(event) {
     // Prepare request payload
     const bookingData = {
         clientName: clientName,
+        gender: gender,
         contactNumber: contactNumber,
         addressArea: addressArea,
         serviceType: serviceType,
