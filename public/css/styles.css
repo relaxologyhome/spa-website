@@ -96,12 +96,12 @@ h1, h2, h3, h4, h5, h6 {
    ============================================================================ */
 
 .navbar {
-    background-color: var(--deep-green);
+    background: linear-gradient(135deg, #d81b60 0%, #ec407a 100%);
     padding: var(--spacing-md) 0;
     position: sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 8px 24px rgba(216, 27, 96, 0.25);
 }
 
 .nav-container {
@@ -115,20 +115,33 @@ h1, h2, h3, h4, h5, h6 {
 
 .logo {
     display: flex;
-    align-items: baseline;
-    gap: var(--spacing-sm);
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.logo-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
 .logo h1 {
-    color: var(--gold);
-    font-size: 1.8rem;
+    color: var(--white);
+    font-size: 2rem;
     margin: 0;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .logo .tagline {
-    color: var(--light-gold);
-    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 0.85rem;
     margin: 0;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .nav-menu {
@@ -138,16 +151,18 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .nav-link {
-    color: var(--light-gold);
+    color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
     font-size: 1rem;
-    transition: color 0.3s ease;
+    font-weight: 500;
+    transition: all 0.3s ease;
     position: relative;
 }
 
 .nav-link:hover,
 .nav-link.active {
-    color: var(--gold);
+    color: var(--white);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .nav-link::after {
@@ -157,7 +172,7 @@ h1, h2, h3, h4, h5, h6 {
     left: 0;
     width: 0;
     height: 2px;
-    background-color: var(--gold);
+    background-color: var(--white);
     transition: width 0.3s ease;
 }
 
