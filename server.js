@@ -43,6 +43,62 @@ const existingReviews = [
     rating: 5,
     comment: "Laptop neck pain completely resolved after just one session. Highly recommend!",
     date: "2026-04-05"
+  },
+  {
+    id: 4,
+    clientName: "Neha Sharma",
+    location: "Whitefield",
+    rating: 5,
+    comment: "Mani has an absolute gift for relieving tension. I booked his signature oil massage special for my severe 'laptop neck.' He brought a complete, spotless clinical setup and made sure I felt completely comfortable throughout the session. Best therapeutic massage I've had!",
+    date: "2026-04-19"
+  },
+  {
+    id: 5,
+    clientName: "Pooja V.",
+    location: "Banjara Hills",
+    rating: 5,
+    comment: "If you need serious muscle recovery, Mani is the therapist to call. The premium organic oils he uses are fantastic and don't leave you feeling sticky. He is highly professional, punctual, and very respectful of your home space. It felt like a luxury spa experience right in my living room.",
+    date: "2026-04-12"
+  },
+  {
+    id: 6,
+    clientName: "Anjali Desai",
+    location: "Indiranagar",
+    rating: 5,
+    comment: "I booked the 60-minute oil massage with Mani after a long week of travel. His technique is fantastic—firm pressure exactly where I needed it. I really appreciated his professional demeanor and the hygienic setup he brings. I felt completely relaxed and safe. Definitely booking again!",
+    date: "2026-04-05"
+  },
+  {
+    id: 7,
+    clientName: "Swathi Reddy",
+    location: "Gachibowli",
+    rating: 5,
+    comment: "I booked the special oil massage, and it was pure bliss! The therapist brought these incredible, warm organic oils that smelled like a high-end luxury spa. Not only did it melt away all my muscle stiffness, but my skin felt amazingly soft afterward. Best home service in Gachibowli!",
+    date: "2026-04-21"
+  },
+  {
+    id: 8,
+    clientName: "Ritu K.",
+    location: "Bangalore",
+    rating: 5,
+    comment: "Highly recommend the oil massage special! I was a bit worried about my bed getting messy, but the setup was completely clinical and spotless. The aromatic oils they use are so calming. I literally fell asleep right after the therapist left because I was so relaxed.",
+    date: "2026-04-16"
+  },
+  {
+    id: 9,
+    clientName: "Deepika Menon",
+    location: "Jubilee Hills",
+    rating: 5,
+    comment: "If you are stressed from work, you have to try their signature oil massage. The warm oil combined with the deep tissue technique completely worked out the knots in my upper back. Plus, knowing it's a verified female-only service made it so easy to completely unwind at home.",
+    date: "2026-04-09"
+  },
+  {
+    id: 10,
+    clientName: "Shruti V.",
+    location: "Hitech City",
+    rating: 5,
+    comment: "I took advantage of the oil massage special and it exceeded every expectation. The blend of essential oils they use feels so premium and doesn't leave you feeling sticky at all. The therapist was incredibly skilled and polite. Such a wonderful and safe experience!",
+    date: "2026-03-30"
   }
 ];
 
