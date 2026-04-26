@@ -1,5 +1,5 @@
 /**
- * Relaxology Home Support - Frontend Application
+ * Relaxology Woman Spa - Frontend Application
  * Handles form submissions, API interactions, and UI updates
  */
 
@@ -96,7 +96,12 @@ async function handleBookingSubmit(event) {
 
     // Collect form data
     const clientName = document.getElementById('clientName').value;
-    const gender = document.querySelector('input[name="gender"]:checked').value;
+    const genderRadio = document.querySelector('input[name="gender"]:checked');
+    if (!genderRadio) {
+        showMessage('booking-message', '✗ Please select a gender', 'error');
+        return;
+    }
+    const gender = genderRadio.value;
     const contactNumber = document.getElementById('contactNumber').value;
     const addressArea = document.getElementById('addressArea').value;
     const serviceType = document.getElementById('serviceType').value;
@@ -243,10 +248,18 @@ async function loadReviews() {
     const reviewsContainer = document.getElementById('reviews-container');
 
     try {
+        console.log('Fetching reviews from /api/reviews...');
         const response = await fetch('/api/reviews');
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const reviews = await response.json();
+        console.log('Reviews received:', reviews);
 
-        if (reviews.length === 0) {
+        if (!reviews || reviews.length === 0) {
             reviewsContainer.innerHTML = '<p class="loading">No reviews yet. Be the first to share your experience!</p>';
             return;
         }
@@ -259,6 +272,7 @@ async function loadReviews() {
             const reviewCard = createReviewCard(review);
             reviewsContainer.appendChild(reviewCard);
         });
+        console.log('Reviews displayed successfully');
 
     } catch (error) {
         console.error('Error loading reviews:', error);
@@ -393,6 +407,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-console.log('%c🌿 Relaxology Home Support', 'font-size: 16px; color: #1a4d3e; font-weight: bold;');
+console.log('%c🌿 Relaxology Woman Spa', 'font-size: 16px; color: #d81b60; font-weight: bold;');
 console.log('%cPremium Mobile Spa Services for Women', 'font-size: 12px; color: #d4af37;');
 console.log('%cCertified Expert Therapist Mani', 'font-size: 11px; color: #4a9b6f;');

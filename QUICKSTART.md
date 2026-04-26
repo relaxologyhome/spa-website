@@ -1,4 +1,4 @@
-# Relaxology Home Support - Quick Start Guide
+# Relaxology Woman Spa - Quick Start Guide
 
 ## 🚀 Getting Started in 3 Steps
 
@@ -16,7 +16,7 @@ npm start
 You'll see:
 ```
 ======================================================================
-Relaxology Home Support - Premium Spa Services
+Relaxology Woman Spa - Premium Spa Services
 ======================================================================
 
 ✓ Server running on http://localhost:3000
@@ -238,7 +238,7 @@ To make this production-ready, consider:
 
 ## ✅ You're All Set!
 
-Your Relaxology Home Support spa website is ready to go! 
+Your Relaxology Woman Spa spa website is ready to go! 
 
 **Access it now:** http://localhost:3000
 

@@ -1,5 +1,5 @@
 # IMPLEMENTATION GUIDE
-# Relaxology Home Support - Spa Website Project
+# Relaxology Woman Spa - Spa Website Project
 
 ## 📦 Project Structure
 

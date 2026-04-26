@@ -1,5 +1,5 @@
 /**
- * Relaxology Home Support - Express.js Backend
+ * Relaxology Woman Spa - Express.js Backend
  * A curated therapeutic sanctuary for women's deep tissue and aromatic oil relief
   * Service provided by Certified Expert Therapist
  */
@@ -66,7 +66,7 @@ app.get('/', (req, res) => {
  */
 app.get('/api/home-data', (req, res) => {
   const homeData = {
-    spaName: "Relaxology Home Support",
+    spaName: "Relaxology Woman Spa",
     tagline: "A curated therapeutic sanctuary, specialized deep tissue, and aromatic oil relief",
     mission: "Exclusively for women. We target tension and chronic pain with unparalleled professional hygiene and absolute boundary respect.",
     locations: ["Chennai", "Bangalore", "Hyderabad"],
@@ -463,7 +463,7 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`\n${'='.repeat(70)}`);
-  console.log('Relaxology Home Support - Premium Spa Services');
+  console.log('Relaxology Woman Spa - Premium Spa Services');
   console.log(`${'='.repeat(70)}`);
   console.log(`\n✓ Server running on http://localhost:${PORT}`);
   console.log('\n📍 Service: Deep Tissue & Aromatic Oil Therapy');

@@ -1,10 +1,10 @@
-# Relaxology Home Support - Premium Spa Services Platform
+# Relaxology Woman Spa - Premium Spa Services Platform
 
 A luxurious, fully-functional single-page application for a premium mobile spa specializing in deep tissue and aromatic oil therapy for women. Built with Node.js/Express.js backend and vanilla JavaScript frontend.
 
 ## 🌿 Project Overview
 
-**Spa Name:** Relaxology Home Support  
+**Spa Name:** Relaxology Woman Spa  
 **Service Model:** Mobile spa therapy - We bring the sanctuary to your doorstep  
 **Primary Location:** Chennai (with legacy service in Gachibowli, Hyderabad)  
 **Therapist:** Certified Expert Therapist Mani (Professional Conduct & Boundaries Certified)  
@@ -609,7 +609,7 @@ The app serves both frontend and backend from the same origin (no CORS needed).
 
 ## 📄 License
 
-Relaxology Home Support © 2026. All rights reserved.
+Relaxology Woman Spa © 2026. All rights reserved.
 
 ---
 
