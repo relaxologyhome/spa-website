@@ -4,10 +4,43 @@
  */
 
 // ============================================================================
+// SERVER HEALTH MONITORING - PREVENT INACTIVITY
+// ============================================================================
+
+/**
+ * Monitor server health and keep it active
+ */
+function startServerHealthMonitoring() {
+    // Check server health every 2 minutes
+    setInterval(async () => {
+        try {
+            const response = await fetch('/api/health', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('✓ Server Health: Active -', data.status, '| Uptime:', data.uptimeFormatted);
+            } else {
+                console.warn('⚠️  Server returned status:', response.status);
+            }
+        } catch (error) {
+            console.error('❌ Server health check failed:', error);
+        }
+    }, 2 * 60 * 1000); // Every 2 minutes
+}
+
+// ============================================================================
 // NAVIGATION - SMOOTH SCROLLING & ACTIVE STATE
 // ============================================================================
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Start server health monitoring
+    startServerHealthMonitoring();
+
     // Set up navigation active state
     const navLinks = document.querySelectorAll('.nav-link');
     
@@ -79,6 +112,98 @@ function validateWeekendDate(dateString) {
   // Date validation is optional now
   // Users can book any day of the week
   return true;
+}
+
+// ============================================================================
+// CAROUSEL FUNCTIONALITY
+// ============================================================================
+
+let currentCarouselIndex = 0;
+let totalReviews = 0;
+
+/**
+ * Initialize carousel controls
+ */
+function initializeCarousel() {
+    const prevBtn = document.getElementById('carouselPrev');
+    const nextBtn = document.getElementById('carouselNext');
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            showPrevTestimonial();
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            showNextTestimonial();
+        });
+    }
+}
+
+/**
+ * Show next testimonial
+ */
+function showNextTestimonial() {
+    if (totalReviews === 0) return;
+    currentCarouselIndex = (currentCarouselIndex + 1) % totalReviews;
+    updateCarousel();
+}
+
+/**
+ * Show previous testimonial
+ */
+function showPrevTestimonial() {
+    if (totalReviews === 0) return;
+    currentCarouselIndex = (currentCarouselIndex - 1 + totalReviews) % totalReviews;
+    updateCarousel();
+}
+
+/**
+ * Update carousel display and dots
+ */
+function updateCarousel() {
+    const cards = document.querySelectorAll('.review-card');
+    const dots = document.querySelectorAll('.carousel-dot');
+
+    // Update cards
+    cards.forEach((card, index) => {
+        if (index === currentCarouselIndex) {
+            card.classList.add('active');
+        } else {
+            card.classList.remove('active');
+        }
+    });
+
+    // Update dots
+    dots.forEach((dot, index) => {
+        if (index === currentCarouselIndex) {
+            dot.classList.add('active');
+        } else {
+            dot.classList.remove('active');
+        }
+    });
+}
+
+/**
+ * Create carousel dots
+ */
+function createCarouselDots() {
+    const dotsContainer = document.getElementById('carouselDots');
+    if (!dotsContainer) return;
+
+    dotsContainer.innerHTML = '';
+    
+    for (let i = 0; i < totalReviews; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'carousel-dot';
+        if (i === 0) dot.classList.add('active');
+        dot.addEventListener('click', () => {
+            currentCarouselIndex = i;
+            updateCarousel();
+        });
+        dotsContainer.appendChild(dot);
+    }
 }
 
 // ============================================================================
@@ -267,12 +392,23 @@ async function loadReviews() {
         // Clear loading message
         reviewsContainer.innerHTML = '';
 
+        // Set total reviews for carousel
+        totalReviews = reviews.length;
+
         // Display each review
-        reviews.forEach(review => {
+        reviews.forEach((review, index) => {
             const reviewCard = createReviewCard(review);
+            if (index === 0) {
+                reviewCard.classList.add('active');
+            }
             reviewsContainer.appendChild(reviewCard);
         });
-        console.log('Reviews displayed successfully');
+
+        // Initialize carousel controls
+        initializeCarousel();
+        createCarouselDots();
+
+        console.log('Reviews displayed successfully in carousel format');
 
     } catch (error) {
         console.error('Error loading reviews:', error);

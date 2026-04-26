@@ -226,9 +226,18 @@
     <section id="reviews" class="reviews">
         <div class="container">
             <h2 class="section-title">Client Testimonials</h2>
-            <div id="reviews-container" class="reviews-grid">
-                <!-- Reviews will be loaded here via JavaScript -->
-                <p class="loading">Loading testimonials...</p>
+            <div class="carousel-wrapper">
+                <div id="reviews-container" class="reviews-carousel">
+                    <!-- Reviews will be loaded here via JavaScript -->
+                    <p class="loading">Loading testimonials...</p>
+                </div>
+                <button class="carousel-btn carousel-prev" id="carouselPrev" aria-label="Previous testimonial">
+                    <span>❮</span>
+                </button>
+                <button class="carousel-btn carousel-next" id="carouselNext" aria-label="Next testimonial">
+                    <span>❯</span>
+                </button>
+                <div class="carousel-dots" id="carouselDots"></div>
             </div>
         </div>
     </section>
@@ -286,7 +295,7 @@
     <footer class="footer">
         <div class="container">
             <p>&copy; 2026 Relaxology Woman Spa. All rights reserved.</p>
-            <p>Premium Mobile Spa Services | Certified Expert Therapist Mani</p>
+            <p>Premium Mobile Spa Services | Certified Expert Therapist</p>
             <p>Chennai (Primary) | Gachibowli, Hyderabad (Legacy)</p>
         </div>
     </footer>

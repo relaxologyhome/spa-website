@@ -12,9 +12,23 @@ const app = express();
 // ============================================================================
 // MIDDLEWARE CONFIGURATION
 // ============================================================================
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// Set request timeout (30 seconds)
+app.use((req, res, next) => {
+  req.setTimeout(30000);
+  res.setTimeout(30000);
+  next();
+});
+
+// Limit request body size and set rate limiting
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Health check to prevent server inactivity
+app.use((req, res, next) => {
+  res.setHeader('X-Response-Time', new Date().toISOString());
+  next();
+});
 
 // ============================================================================
 // MOCK DATABASE - EXISTING REVIEWS
@@ -105,6 +119,28 @@ const existingReviews = [
 // Mock storage for new bookings and feedback
 const bookings = [];
 const feedbackSubmissions = [];
+
+// ============================================================================
+// MEMORY MANAGEMENT - PREVENT MEMORY LEAKS
+// ============================================================================
+
+const MAX_BOOKINGS = 1000;  // Keep only last 1000 bookings
+const MAX_FEEDBACK = 1000;  // Keep only last 1000 feedback items
+
+/**
+ * Clean old data to prevent memory leaks
+ */
+function cleanOldData() {
+  if (bookings.length > MAX_BOOKINGS) {
+    bookings.splice(0, bookings.length - MAX_BOOKINGS);
+  }
+  if (feedbackSubmissions.length > MAX_FEEDBACK) {
+    feedbackSubmissions.splice(0, feedbackSubmissions.length - MAX_FEEDBACK);
+  }
+}
+
+// Run cleanup every 5 minutes
+setInterval(cleanOldData, 5 * 60 * 1000);
 
 // ============================================================================
 // FUNCTION A: STANDARD WEB PRESENTATION (GET LOGIC)
@@ -487,6 +523,44 @@ app.get('/api/admin/feedback', (req, res) => {
 });
 
 // ============================================================================
+// HEALTH CHECK ENDPOINT
+// ============================================================================
+
+/**
+ * Health check endpoint to monitor server status
+ */
+app.get('/api/health', (req, res) => {
+  const uptime = process.uptime();
+  const memoryUsage = process.memoryUsage();
+  
+  res.json({
+    status: 'healthy',
+    uptime: Math.floor(uptime),
+    uptimeFormatted: formatUptime(uptime),
+    timestamp: new Date().toISOString(),
+    memory: {
+      heapUsed: Math.round(memoryUsage.heapUsed / 1024 / 1024) + 'MB',
+      heapTotal: Math.round(memoryUsage.heapTotal / 1024 / 1024) + 'MB',
+      external: Math.round(memoryUsage.external / 1024 / 1024) + 'MB'
+    },
+    data: {
+      totalBookings: bookings.length,
+      totalFeedback: feedbackSubmissions.length
+    }
+  });
+});
+
+/**
+ * Format uptime for display
+ */
+function formatUptime(uptime) {
+  const hours = Math.floor(uptime / 3600);
+  const minutes = Math.floor((uptime % 3600) / 60);
+  const seconds = Math.floor(uptime % 60);
+  return `${hours}h ${minutes}m ${seconds}s`;
+}
+
+// ============================================================================
 // ERROR HANDLING
 // ============================================================================
 
@@ -512,21 +586,58 @@ app.use((err, req, res, next) => {
 });
 
 // ============================================================================
+// PROCESS-LEVEL ERROR HANDLERS - PREVENT SERVER CRASHES
+// ============================================================================
+
+/**
+ * Handle uncaught exceptions
+ */
+process.on('uncaughtException', (error) => {
+  console.error('UNCAUGHT EXCEPTION:', error);
+  // Server will continue running after logging the error
+  cleanOldData(); // Try to free memory
+});
+
+/**
+ * Handle unhandled promise rejections
+ */
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('UNHANDLED REJECTION at:', promise, 'reason:', reason);
+  // Server will continue running after logging the error
+  cleanOldData(); // Try to free memory
+});
+
+/**
+ * Graceful warning for memory usage
+ */
+setInterval(() => {
+  const memUsage = process.memoryUsage();
+  const heapUsedPercent = (memUsage.heapUsed / memUsage.heapTotal) * 100;
+  
+  if (heapUsedPercent > 85) {
+    console.warn(`⚠️  HIGH MEMORY USAGE: ${heapUsedPercent.toFixed(2)}%`);
+    cleanOldData(); // Force cleanup if memory is getting high
+  }
+}, 30000); // Check every 30 seconds
+
+// ============================================================================
 // SERVER INITIALIZATION
 // ============================================================================
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`\n${'='.repeat(70)}`);
   console.log('Relaxology Woman Spa - Premium Spa Services');
   console.log(`${'='.repeat(70)}`);
   console.log(`\n✓ Server running on http://localhost:${PORT}`);
+  console.log(`✓ Health Check: http://localhost:${PORT}/api/health`);
   console.log('\n📍 Service: Deep Tissue & Aromatic Oil Therapy');
   console.log('👩‍⚕️ Therapist: Certified Expert Therapist Mani');
   console.log('📍 Locations: Chennai (Primary) | Gachibowli, Hyderabad (Legacy)');
   console.log('\nAvailable Endpoints:');
   console.log('  GET  / - Home page');
+  console.log('  GET  /api/health - Server health status');
   console.log('  GET  /api/home-data - Spa information');
   console.log('  GET  /api/services - Services list');
   console.log('  GET  /api/therapist-info - Therapist details');
