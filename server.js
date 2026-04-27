@@ -7,6 +7,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const fs = require('fs');
 const nodemailer = require('nodemailer');
 const app = express();
 
@@ -38,6 +39,156 @@ emailTransporter.verify((error, success) => {
 });
 
 // ============================================================================
+// FILE-BASED DATA PERSISTENCE
+// ============================================================================
+
+const DATA_DIR = path.join(__dirname, 'data');
+const BOOKINGS_FILE = path.join(DATA_DIR, 'bookings.json');
+const FEEDBACK_FILE = path.join(DATA_DIR, 'feedback.json');
+
+/**
+ * Ensure data directory exists
+ */
+function ensureDataDirectory() {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    console.log('✓ Data directory created');
+  }
+}
+
+/**
+ * Load bookings from JSON file
+ */
+function loadBookings() {
+  try {
+    if (fs.existsSync(BOOKINGS_FILE)) {
+      const data = fs.readFileSync(BOOKINGS_FILE, 'utf-8');
+      const bookings = JSON.parse(data || '[]');
+      console.log(`✓ Loaded ${bookings.length} bookings from file`);
+      return bookings;
+    }
+    return [];
+  } catch (error) {
+    console.error('❌ Error loading bookings:', error.message);
+    return [];
+  }
+}
+
+/**
+ * Load feedback from JSON file
+ */
+function loadFeedback() {
+  try {
+    if (fs.existsSync(FEEDBACK_FILE)) {
+      const data = fs.readFileSync(FEEDBACK_FILE, 'utf-8');
+      const feedback = JSON.parse(data || '[]');
+      console.log(`✓ Loaded ${feedback.length} feedback submissions from file`);
+      return feedback;
+    }
+    return [];
+  } catch (error) {
+    console.error('❌ Error loading feedback:', error.message);
+    return [];
+  }
+}
+
+/**
+ * Save bookings to JSON file
+ */
+function saveBookings(bookings) {
+  try {
+    fs.writeFileSync(BOOKINGS_FILE, JSON.stringify(bookings, null, 2));
+    console.log('✓ Bookings saved to file');
+  } catch (error) {
+    console.error('❌ Error saving bookings:', error.message);
+  }
+}
+
+/**
+ * Save feedback to JSON file
+ */
+function saveFeedback(feedback) {
+  try {
+    fs.writeFileSync(FEEDBACK_FILE, JSON.stringify(feedback, null, 2));
+    console.log('✓ Feedback saved to file');
+  } catch (error) {
+    console.error('❌ Error saving feedback:', error.message);
+  }
+}
+
+// ============================================================================
+// VISITOR ANALYTICS - FILE-BASED STORAGE
+// ============================================================================
+
+const VISITORS_FILE = path.join(DATA_DIR, 'visitors.json');
+
+/**
+ * Load visitors from JSON file
+ */
+function loadVisitors() {
+  try {
+    if (fs.existsSync(VISITORS_FILE)) {
+      const data = fs.readFileSync(VISITORS_FILE, 'utf-8');
+      const visitors = JSON.parse(data || '[]');
+      console.log(`✓ Loaded ${visitors.length} visitor records from file`);
+      return visitors;
+    }
+    return [];
+  } catch (error) {
+    console.error('❌ Error loading visitors:', error.message);
+    return [];
+  }
+}
+
+/**
+ * Save visitors to JSON file
+ */
+function saveVisitors(visitors) {
+  try {
+    fs.writeFileSync(VISITORS_FILE, JSON.stringify(visitors, null, 2));
+  } catch (error) {
+    console.error('❌ Error saving visitors:', error.message);
+  }
+}
+
+/**
+ * Get client IP address from request
+ */
+function getClientIP(req) {
+  return (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 
+         req.connection.remoteAddress || 
+         req.socket.remoteAddress ||
+         req.ip || 
+         'Unknown';
+}
+
+/**
+ * Fetch geolocation data from IP using free API
+ */
+async function getGeolocation(ip) {
+  try {
+    if (ip === 'Unknown' || ip.includes('127.0') || ip.includes('::1')) {
+      return { country: 'Local', city: 'Local', region: 'Local' };
+    }
+    
+    const response = await fetch(`https://ip-api.com/json/${ip}?fields=country,city,region,status`);
+    const data = await response.json();
+    
+    if (data.status === 'success') {
+      return {
+        country: data.country || 'Unknown',
+        city: data.city || 'Unknown',
+        region: data.region || 'Unknown'
+      };
+    }
+    return { country: 'Unknown', city: 'Unknown', region: 'Unknown' };
+  } catch (error) {
+    console.warn('⚠️  Geolocation API error:', error.message);
+    return { country: 'Unknown', city: 'Unknown', region: 'Unknown' };
+  }
+}
+
+// ============================================================================
 // MIDDLEWARE CONFIGURATION
 // ============================================================================
 // Set request timeout (30 seconds)
@@ -51,6 +202,62 @@ app.use((req, res, next) => {
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// ============================================================================
+// VISITOR TRACKING MIDDLEWARE
+// ============================================================================
+app.use((req, res, next) => {
+  // Skip tracking for API calls and static files (only track page views)
+  if (req.path === '/' || req.path === '/index.html') {
+    const ip = getClientIP(req);
+    const userAgent = req.headers['user-agent'] || 'Unknown';
+    
+    // Find existing visitor session or create new one
+    const existingVisitor = visitors.find(v => v.ip === ip);
+    
+    if (existingVisitor) {
+      // Update existing visitor
+      existingVisitor.lastVisit = new Date().toISOString();
+      existingVisitor.pageViews = (existingVisitor.pageViews || 0) + 1;
+      existingVisitor.pages = existingVisitor.pages || [];
+      if (!existingVisitor.pages.includes(req.path)) {
+        existingVisitor.pages.push(req.path);
+      }
+    } else {
+      // Create new visitor record
+      const newVisitor = {
+        id: Date.now().toString(),
+        ip: ip,
+        userAgent: userAgent,
+        firstVisit: new Date().toISOString(),
+        lastVisit: new Date().toISOString(),
+        pageViews: 1,
+        pages: [req.path],
+        location: { country: 'Loading...', city: 'Loading...', region: 'Loading...' },
+        device: 'Unknown',
+        actions: []
+      };
+      
+      // Fetch geolocation asynchronously (don't wait for it)
+      getGeolocation(ip).then(location => {
+        newVisitor.location = location;
+        saveVisitors(visitors);
+      });
+      
+      // Extract device info from user agent
+      if (userAgent.includes('Mobile')) newVisitor.device = 'Mobile';
+      else if (userAgent.includes('Tablet')) newVisitor.device = 'Tablet';
+      else if (userAgent.includes('Windows')) newVisitor.device = 'Windows';
+      else if (userAgent.includes('Mac')) newVisitor.device = 'Mac';
+      else if (userAgent.includes('Linux')) newVisitor.device = 'Linux';
+      
+      visitors.push(newVisitor);
+    }
+    
+    saveVisitors(visitors);
+  }
+  next();
+});
 
 // Health check to prevent server inactivity
 app.use((req, res, next) => {
@@ -144,9 +351,11 @@ const existingReviews = [
   }
 ];
 
-// Mock storage for new bookings and feedback
-const bookings = [];
-const feedbackSubmissions = [];
+// Mock storage for new bookings and feedback - Load from files on startup
+ensureDataDirectory();
+let bookings = loadBookings();
+let feedbackSubmissions = loadFeedback();
+let visitors = loadVisitors();
 
 // ============================================================================
 // MEMORY MANAGEMENT - PREVENT MEMORY LEAKS
@@ -161,9 +370,11 @@ const MAX_FEEDBACK = 1000;  // Keep only last 1000 feedback items
 function cleanOldData() {
   if (bookings.length > MAX_BOOKINGS) {
     bookings.splice(0, bookings.length - MAX_BOOKINGS);
+    saveBookings(bookings);
   }
   if (feedbackSubmissions.length > MAX_FEEDBACK) {
     feedbackSubmissions.splice(0, feedbackSubmissions.length - MAX_FEEDBACK);
+    saveFeedback(feedbackSubmissions);
   }
 }
 
@@ -561,6 +772,9 @@ app.post('/api/book-appointment', (req, res) => {
 
   bookings.push(booking);
 
+  // Save bookings to file
+  saveBookings(bookings);
+
   // Send email notification to admin
   sendBookingEmail(booking);
 
@@ -645,6 +859,9 @@ app.post('/api/submit-feedback', (req, res) => {
   };
 
   feedbackSubmissions.push(feedback);
+
+  // Save feedback to file
+  saveFeedback(feedbackSubmissions);
 
   // Send email notification to admin
   sendFeedbackEmail(feedback);
@@ -818,6 +1035,413 @@ setInterval(() => {
     cleanOldData(); // Force cleanup if memory is getting high
   }
 }, 30000); // Check every 30 seconds
+
+// ============================================================================
+// VISITOR ANALYTICS API ENDPOINTS
+// ============================================================================
+
+/**
+ * Track visitor action (form submission, button click, etc.)
+ */
+app.post('/api/track-action', (req, res) => {
+  const { action, details } = req.body;
+  const ip = getClientIP(req);
+  
+  // Find visitor
+  const visitor = visitors.find(v => v.ip === ip);
+  if (visitor) {
+    visitor.actions = visitor.actions || [];
+    visitor.actions.push({
+      action: action,
+      details: details,
+      timestamp: new Date().toISOString()
+    });
+    visitor.lastVisit = new Date().toISOString();
+    saveVisitors(visitors);
+  }
+  
+  res.json({ success: true });
+});
+
+/**
+ * Get visitor analytics (requires password for security)
+ */
+app.get('/api/analytics', (req, res) => {
+  const password = req.query.pwd || req.headers['authorization'];
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'spa123';
+  
+  // Simple password check (in production, use proper authentication)
+  if (password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized - Invalid password' });
+  }
+  
+  // Calculate analytics
+  const totalVisitors = visitors.length;
+  const totalPageViews = visitors.reduce((sum, v) => sum + (v.pageViews || 0), 0);
+  
+  // Get unique countries
+  const countries = [...new Set(visitors.map(v => v.location?.country || 'Unknown'))];
+  
+  // Get unique devices
+  const deviceStats = {};
+  visitors.forEach(v => {
+    const device = v.device || 'Unknown';
+    deviceStats[device] = (deviceStats[device] || 0) + 1;
+  });
+  
+  // Top countries by visitor count
+  const countryStats = {};
+  visitors.forEach(v => {
+    const country = v.location?.country || 'Unknown';
+    countryStats[country] = (countryStats[country] || 0) + 1;
+  });
+  
+  const topCountries = Object.entries(countryStats)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10);
+  
+  res.json({
+    summary: {
+      totalVisitors,
+      totalPageViews,
+      averagePageViews: (totalPageViews / totalVisitors || 0).toFixed(2),
+      uniqueCountries: countries.length,
+      uniqueDevices: Object.keys(deviceStats).length
+    },
+    deviceStats,
+    topCountries: Object.fromEntries(topCountries),
+    recentVisitors: visitors
+      .sort((a, b) => new Date(b.lastVisit) - new Date(a.lastVisit))
+      .slice(0, 20)
+      .map(v => ({
+        ip: v.ip,
+        location: `${v.location?.city || ''}, ${v.location?.country || ''}`,
+        device: v.device,
+        pageViews: v.pageViews,
+        firstVisit: v.firstVisit,
+        lastVisit: v.lastVisit,
+        actions: (v.actions || []).length
+      }))
+  });
+});
+
+/**
+ * Analytics Dashboard HTML Page
+ */
+app.get('/analytics', (req, res) => {
+  const password = req.query.pwd || '';
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'spa123';
+  
+  // If no password provided, show login page
+  if (password !== ADMIN_PASSWORD) {
+    return res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Spa Analytics - Login</title>
+        <style>
+          body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+          }
+          .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 400px;
+          }
+          h1 { 
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+          }
+          input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0 20px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+          }
+          button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+          }
+          button:hover { background: #764ba2; }
+          .error { color: red; margin-top: 10px; }
+        </style>
+      </head>
+      <body>
+        <div class="login-box">
+          <h1>🔐 Spa Analytics</h1>
+          <form method="GET">
+            <input type="password" name="pwd" placeholder="Enter Admin Password" required>
+            <button type="submit">Login</button>
+          </form>
+          ${req.query.error ? '<p class="error">Invalid password</p>' : ''}
+        </div>
+      </body>
+      </html>
+    `);
+  }
+  
+  // Password correct, show analytics
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Spa Analytics Dashboard</title>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+          background: #f5f5f5;
+          padding: 20px;
+        }
+        .header {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          padding: 30px;
+          border-radius: 10px;
+          margin-bottom: 30px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        h1 { font-size: 28px; }
+        .logout { background: white; color: #667eea; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; }
+        .logout:hover { opacity: 0.9; }
+        
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 20px;
+          margin-bottom: 30px;
+        }
+        .stat-card {
+          background: white;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .stat-card h3 { color: #667eea; margin-bottom: 10px; font-size: 14px; }
+        .stat-card .number { font-size: 32px; font-weight: bold; color: #333; }
+        
+        .charts-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+          gap: 20px;
+          margin-bottom: 30px;
+        }
+        .chart-container {
+          background: white;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .chart-container h3 { margin-bottom: 20px; color: #333; }
+        
+        .visitors-table {
+          background: white;
+          border-radius: 10px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+          overflow: hidden;
+        }
+        .visitors-table h3 { padding: 20px; padding-bottom: 10px; color: #333; }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        th {
+          background: #667eea;
+          color: white;
+          padding: 15px;
+          text-align: left;
+          font-weight: 600;
+        }
+        td {
+          padding: 15px;
+          border-bottom: 1px solid #eee;
+        }
+        tr:hover { background: #f9f9f9; }
+        
+        .refresh-btn {
+          background: #667eea;
+          color: white;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          font-weight: bold;
+          margin-top: 10px;
+        }
+        .refresh-btn:hover { background: #764ba2; }
+        
+        @media (max-width: 768px) {
+          .charts-grid { grid-template-columns: 1fr; }
+          .header { flex-direction: column; gap: 15px; text-align: center; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <div>
+          <h1>📊 Spa Analytics Dashboard</h1>
+          <p>Visitor tracking and analytics</p>
+        </div>
+        <a href="/" class="logout">← Back to Site</a>
+      </div>
+      
+      <div class="stats-grid" id="stats"></div>
+      <div class="charts-grid" id="charts"></div>
+      <div class="visitors-table" id="visitors"></div>
+      <button class="refresh-btn" onclick="loadAnalytics()">🔄 Refresh</button>
+      
+      <script>
+        async function loadAnalytics() {
+          try {
+            const response = await fetch('/api/analytics?pwd=${password}');
+            const data = await response.json();
+            
+            if (data.error) {
+              alert('Error: ' + data.error);
+              return;
+            }
+            
+            // Update stats
+            const statsHtml = \`
+              <div class="stat-card">
+                <h3>Total Visitors</h3>
+                <div class="number">\${data.summary.totalVisitors}</div>
+              </div>
+              <div class="stat-card">
+                <h3>Total Page Views</h3>
+                <div class="number">\${data.summary.totalPageViews}</div>
+              </div>
+              <div class="stat-card">
+                <h3>Avg Views/Visitor</h3>
+                <div class="number">\${data.summary.averagePageViews}</div>
+              </div>
+              <div class="stat-card">
+                <h3>Unique Countries</h3>
+                <div class="number">\${data.summary.uniqueCountries}</div>
+              </div>
+              <div class="stat-card">
+                <h3>Device Types</h3>
+                <div class="number">\${data.summary.uniqueDevices}</div>
+              </div>
+            \`;
+            document.getElementById('stats').innerHTML = statsHtml;
+            
+            // Device chart
+            const deviceCtx = document.createElement('canvas');
+            const chartsDiv = document.getElementById('charts');
+            const deviceChartDiv = document.createElement('div');
+            deviceChartDiv.className = 'chart-container';
+            deviceChartDiv.innerHTML = '<h3>Visitors by Device</h3>';
+            deviceChartDiv.appendChild(deviceCtx);
+            chartsDiv.innerHTML = '';
+            chartsDiv.appendChild(deviceChartDiv);
+            
+            new Chart(deviceCtx, {
+              type: 'doughnut',
+              data: {
+                labels: Object.keys(data.deviceStats),
+                datasets: [{
+                  data: Object.values(data.deviceStats),
+                  backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe']
+                }]
+              },
+              options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+            });
+            
+            // Top countries chart
+            const countriesCtx = document.createElement('canvas');
+            const countriesChartDiv = document.createElement('div');
+            countriesChartDiv.className = 'chart-container';
+            countriesChartDiv.innerHTML = '<h3>Top Countries</h3>';
+            countriesChartDiv.appendChild(countriesCtx);
+            chartsDiv.appendChild(countriesChartDiv);
+            
+            new Chart(countriesCtx, {
+              type: 'bar',
+              data: {
+                labels: Object.keys(data.topCountries),
+                datasets: [{
+                  label: 'Visitors',
+                  data: Object.values(data.topCountries),
+                  backgroundColor: '#667eea'
+                }]
+              },
+              options: { 
+                responsive: true, 
+                indexAxis: 'y',
+                plugins: { legend: { display: false } }
+              }
+            });
+            
+            // Visitors table
+            const visitorsHtml = \`
+              <h3>Recent Visitors</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>IP Address</th>
+                    <th>Location</th>
+                    <th>Device</th>
+                    <th>Page Views</th>
+                    <th>Actions</th>
+                    <th>Last Visit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  \${data.recentVisitors.map(v => \`
+                    <tr>
+                      <td>\${v.ip}</td>
+                      <td>\${v.location}</td>
+                      <td>\${v.device}</td>
+                      <td>\${v.pageViews}</td>
+                      <td>\${v.actions}</td>
+                      <td>\${new Date(v.lastVisit).toLocaleString()}</td>
+                    </tr>
+                  \`).join('')}
+                </tbody>
+              </table>
+            \`;
+            document.getElementById('visitors').innerHTML = visitorsHtml;
+          } catch (error) {
+            console.error('Error loading analytics:', error);
+            alert('Error loading analytics: ' + error.message);
+          }
+        }
+        
+        // Load on page load
+        loadAnalytics();
+      </script>
+    </body>
+    </html>
+  `);
+});
 
 // ============================================================================
 // SERVER INITIALIZATION

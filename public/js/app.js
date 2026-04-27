@@ -8,6 +8,21 @@
 // ============================================================================
 
 /**
+ * Track visitor action (form submissions, interactions, etc.)
+ */
+async function trackAction(action, details = {}) {
+    try {
+        await fetch('/api/track-action', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action, details })
+        });
+    } catch (error) {
+        console.log('Action tracking (non-critical):', error.message);
+    }
+}
+
+/**
  * Monitor server health and keep it active
  */
 function startServerHealthMonitoring() {
@@ -245,6 +260,12 @@ async function handleBookingSubmit(event) {
     };
 
     try {
+        // Track this action
+        trackAction('booking_submitted', {
+            serviceType: serviceType,
+            date: preferredDate
+        });
+
         // Send booking request to server
         const response = await fetch('/api/book-appointment', {
             method: 'POST',
@@ -310,6 +331,12 @@ async function handleFeedbackSubmit(event) {
     };
 
     try {
+        // Track this action
+        trackAction('feedback_submitted', {
+            rating: parseInt(rating),
+            commentLength: comment.length
+        });
+
         // Send feedback to server
         const response = await fetch('/api/submit-feedback', {
             method: 'POST',

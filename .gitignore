@@ -17,6 +17,10 @@ Thumbs.db
 .env.local
 .env.*.local
 
+# Data Files (persisted on server, not committed)
+data/
+*.json
+
 # IDE
 .vscode/
 .idea/
