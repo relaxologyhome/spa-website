@@ -1,7 +1,7 @@
 /**
  * Relaxology Woman Spa - Express.js Backend
  * A curated therapeutic sanctuary for women's deep tissue and aromatic oil relief
-  * Service provided by Certified Expert Therapist
+   * Service provided by Certified Expert Therapist
  */
 
 const express = require('express');
@@ -298,7 +298,7 @@ const existingReviews = [
     clientName: "Neha Sharma",
     location: "Whitefield",
     rating: 5,
-    comment: "Mani has an absolute gift for relieving tension. I booked his signature oil massage special for my severe 'laptop neck.' He brought a complete, spotless clinical setup and made sure I felt completely comfortable throughout the session. Best therapeutic massage I've had!",
+    comment: "Mani has an absolute gift for relieving tension. I booked his signature oil massage special for my severe 'laptop neck.' He brought a complete, spotless clinical setup and made sure[...]",
     date: "2026-04-19"
   },
   {
@@ -306,7 +306,7 @@ const existingReviews = [
     clientName: "Pooja V.",
     location: "Banjara Hills",
     rating: 5,
-    comment: "If you need serious muscle recovery, Mani is the therapist to call. The premium organic oils he uses are fantastic and don't leave you feeling sticky. He is highly professional, punctual, and very respectful of your home space. It felt like a luxury spa experience right in my living room.",
+    comment: "If you need serious muscle recovery, Mani is the therapist to call. The premium organic oils he uses are fantastic and don't leave you feeling sticky. He is highly professional, pun[...]",
     date: "2026-04-12"
   },
   {
@@ -314,7 +314,7 @@ const existingReviews = [
     clientName: "Anjali Desai",
     location: "Indiranagar",
     rating: 5,
-    comment: "I booked the 60-minute oil massage with Mani after a long week of travel. His technique is fantastic—firm pressure exactly where I needed it. I really appreciated his professional demeanor and the hygienic setup he brings. I felt completely relaxed and safe. Definitely booking again!",
+    comment: "I booked the 60-minute oil massage with Mani after a long week of travel. His technique is fantastic—firm pressure exactly where I needed it. I really appreciated his professional[...]",
     date: "2026-04-05"
   },
   {
@@ -322,7 +322,7 @@ const existingReviews = [
     clientName: "Swathi Reddy",
     location: "Gachibowli",
     rating: 5,
-    comment: "I booked the special oil massage, and it was pure bliss! The therapist brought these incredible, warm organic oils that smelled like a high-end luxury spa. Not only did it melt away all my muscle stiffness, but my skin felt amazingly soft afterward. Best home service in Gachibowli!",
+    comment: "I booked the special oil massage, and it was pure bliss! The therapist brought these incredible, warm organic oils that smelled like a high-end luxury spa. Not only did it melt away[...]",
     date: "2026-04-21"
   },
   {
@@ -330,7 +330,7 @@ const existingReviews = [
     clientName: "Ritu K.",
     location: "Bangalore",
     rating: 5,
-    comment: "Highly recommend the oil massage special! I was a bit worried about my bed getting messy, but the setup was completely clinical and spotless. The aromatic oils they use are so calming. I literally fell asleep right after the therapist left because I was so relaxed.",
+    comment: "Highly recommend the oil massage special! I was a bit worried about my bed getting messy, but the setup was completely clinical and spotless. The aromatic oils they use are so calmi[...]",
     date: "2026-04-16"
   },
   {
@@ -338,7 +338,7 @@ const existingReviews = [
     clientName: "Deepika Menon",
     location: "Jubilee Hills",
     rating: 5,
-    comment: "If you are stressed from work, you have to try their signature oil massage. The warm oil combined with the deep tissue technique completely worked out the knots in my upper back. Plus, knowing it's a verified female-only service made it so easy to completely unwind at home.",
+    comment: "If you are stressed from work, you have to try their signature oil massage. The warm oil combined with the deep tissue technique completely worked out the knots in my upper back. Pl[...]",
     date: "2026-04-09"
   },
   {
@@ -346,7 +346,7 @@ const existingReviews = [
     clientName: "Shruti V.",
     location: "Hitech City",
     rating: 5,
-    comment: "I took advantage of the oil massage special and it exceeded every expectation. The blend of essential oils they use feels so premium and doesn't leave you feeling sticky at all. The therapist was incredibly skilled and polite. Such a wonderful and safe experience!",
+    comment: "I took advantage of the oil massage special and it exceeded every expectation. The blend of essential oils they use feels so premium and doesn't leave you feeling sticky at all. The[...]",
     date: "2026-03-30"
   }
 ];
@@ -444,7 +444,7 @@ async function sendBookingEmail(booking) {
               </tr>
               <tr>
                 <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Status:</strong></td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><span style="background-color: #fff3cd; padding: 4px 8px; border-radius: 4px; color: #856404;">${booking.status}</span></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><span style="background-color: #fff3cd; padding: 4px 8px; border-radius: 4px; color: #856404;">${booking.status}</span></t>
               </tr>
             </table>
             
@@ -939,6 +939,203 @@ app.get('/api/admin/feedback', (req, res) => {
 });
 
 // ============================================================================
+// COMPREHENSIVE ANALYTICS ENDPOINT
+// ============================================================================
+
+/**
+ * Helper function to get date range stats
+ */
+function getDateStats(items, dateField, days = 30) {
+  const stats = {};
+  const now = new Date();
+  
+  for (let i = 0; i < days; i++) {
+    const date = new Date(now);
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split('T')[0];
+    stats[dateStr] = 0;
+  }
+  
+  items.forEach(item => {
+    const dateStr = new Date(item[dateField]).toISOString().split('T')[0];
+    if (stats[dateStr] !== undefined) {
+      stats[dateStr]++;
+    }
+  });
+  
+  return stats;
+}
+
+/**
+ * Get service type distribution
+ */
+function getServiceStats() {
+  const stats = {};
+  bookings.forEach(booking => {
+    stats[booking.serviceType] = (stats[booking.serviceType] || 0) + 1;
+  });
+  return stats;
+}
+
+/**
+ * Get location distribution
+ */
+function getLocationStats() {
+  const stats = {};
+  bookings.forEach(booking => {
+    stats[booking.addressArea] = (stats[booking.addressArea] || 0) + 1;
+  });
+  return stats;
+}
+
+/**
+ * Get feedback rating distribution
+ */
+function getRatingDistribution() {
+  const stats = { '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 };
+  feedbackSubmissions.forEach(feedback => {
+    stats[feedback.rating]++;
+  });
+  return stats;
+}
+
+/**
+ * API: Comprehensive Admin Analytics Dashboard
+ */
+app.get('/api/admin/analytics', (req, res) => {
+  const password = req.query.pwd || req.headers['authorization'];
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'spa123';
+  
+  // Simple password check (in production, use proper authentication)
+  if (password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized - Invalid password' });
+  }
+  
+  try {
+    // Business Metrics
+    const totalBookings = bookings.length;
+    const totalFeedback = feedbackSubmissions.length;
+    const totalVisitors = visitors.length;
+    const totalPageViews = visitors.reduce((sum, v) => sum + (v.pageViews || 0), 0);
+    
+    // Booking Status Distribution
+    const bookingStatus = {
+      pending: bookings.filter(b => b.status === 'pending').length,
+      confirmed: bookings.filter(b => b.status === 'confirmed').length,
+      completed: bookings.filter(b => b.status === 'completed').length,
+      cancelled: bookings.filter(b => b.status === 'cancelled').length
+    };
+    
+    // Feedback Status Distribution
+    const feedbackStatus = {
+      pending_moderation: feedbackSubmissions.filter(f => f.status === 'pending_moderation').length,
+      approved: feedbackSubmissions.filter(f => f.status === 'approved').length,
+      rejected: feedbackSubmissions.filter(f => f.status === 'rejected').length
+    };
+    
+    // Average rating calculation
+    const avgFeedbackRating = feedbackSubmissions.length > 0
+      ? (feedbackSubmissions.reduce((sum, f) => sum + f.rating, 0) / feedbackSubmissions.length).toFixed(2)
+      : 0;
+    
+    // Timeline data (last 30 days)
+    const bookingTimeline = getDateStats(bookings, 'bookingDate', 30);
+    const feedbackTimeline = getDateStats(feedbackSubmissions, 'submissionDate', 30);
+    
+    // Service distribution
+    const serviceStats = getServiceStats();
+    
+    // Location distribution
+    const locationStats = getLocationStats();
+    
+    // Rating distribution
+    const ratingDistribution = getRatingDistribution();
+    
+    // Visitor analytics
+    const deviceStats = {};
+    visitors.forEach(v => {
+      const device = v.device || 'Unknown';
+      deviceStats[device] = (deviceStats[device] || 0) + 1;
+    });
+    
+    // Country/Location stats
+    const countryStats = {};
+    visitors.forEach(v => {
+      const country = v.location?.country || 'Unknown';
+      countryStats[country] = (countryStats[country] || 0) + 1;
+    });
+    
+    const topCountries = Object.entries(countryStats)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+    
+    // Recent bookings
+    const recentBookings = bookings
+      .sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate))
+      .slice(0, 10);
+    
+    // Recent feedback
+    const recentFeedback = feedbackSubmissions
+      .sort((a, b) => new Date(b.submissionDate) - new Date(a.submissionDate))
+      .slice(0, 10);
+    
+    // Recent visitors
+    const recentVisitors = visitors
+      .sort((a, b) => new Date(b.lastVisit) - new Date(a.lastVisit))
+      .slice(0, 10)
+      .map(v => ({
+        ip: v.ip,
+        location: `${v.location?.city || 'Unknown'}, ${v.location?.country || 'Unknown'}`,
+        device: v.device,
+        pageViews: v.pageViews,
+        lastVisit: v.lastVisit
+      }));
+    
+    res.json({
+      summary: {
+        totalBookings,
+        totalFeedback,
+        totalVisitors,
+        totalPageViews,
+        averagePageViewsPerVisitor: totalVisitors > 0 ? (totalPageViews / totalVisitors).toFixed(2) : 0,
+        averageFeedbackRating: parseFloat(avgFeedbackRating)
+      },
+      bookingMetrics: {
+        total: totalBookings,
+        byStatus: bookingStatus,
+        byService: serviceStats,
+        byLocation: locationStats
+      },
+      feedbackMetrics: {
+        total: totalFeedback,
+        byStatus: feedbackStatus,
+        ratingDistribution: ratingDistribution,
+        averageRating: parseFloat(avgFeedbackRating)
+      },
+      timeline: {
+        bookings: bookingTimeline,
+        feedback: feedbackTimeline
+      },
+      visitorMetrics: {
+        total: totalVisitors,
+        byDevice: deviceStats,
+        topCountries: Object.fromEntries(topCountries),
+        averagePageViews: totalVisitors > 0 ? (totalPageViews / totalVisitors).toFixed(2) : 0
+      },
+      recentData: {
+        bookings: recentBookings,
+        feedback: recentFeedback,
+        visitors: recentVisitors
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Analytics error:', error);
+    res.status(500).json({ error: 'Error generating analytics', message: error.message });
+  }
+});
+
+// ============================================================================
 // HEALTH CHECK ENDPOINT
 // ============================================================================
 
@@ -961,7 +1158,8 @@ app.get('/api/health', (req, res) => {
     },
     data: {
       totalBookings: bookings.length,
-      totalFeedback: feedbackSubmissions.length
+      totalFeedback: feedbackSubmissions.length,
+      totalVisitors: visitors.length
     }
   });
 });
@@ -1063,386 +1261,6 @@ app.post('/api/track-action', (req, res) => {
   res.json({ success: true });
 });
 
-/**
- * Get visitor analytics (requires password for security)
- */
-app.get('/api/analytics', (req, res) => {
-  const password = req.query.pwd || req.headers['authorization'];
-  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'spa123';
-  
-  // Simple password check (in production, use proper authentication)
-  if (password !== ADMIN_PASSWORD) {
-    return res.status(401).json({ error: 'Unauthorized - Invalid password' });
-  }
-  
-  // Calculate analytics
-  const totalVisitors = visitors.length;
-  const totalPageViews = visitors.reduce((sum, v) => sum + (v.pageViews || 0), 0);
-  
-  // Get unique countries
-  const countries = [...new Set(visitors.map(v => v.location?.country || 'Unknown'))];
-  
-  // Get unique devices
-  const deviceStats = {};
-  visitors.forEach(v => {
-    const device = v.device || 'Unknown';
-    deviceStats[device] = (deviceStats[device] || 0) + 1;
-  });
-  
-  // Top countries by visitor count
-  const countryStats = {};
-  visitors.forEach(v => {
-    const country = v.location?.country || 'Unknown';
-    countryStats[country] = (countryStats[country] || 0) + 1;
-  });
-  
-  const topCountries = Object.entries(countryStats)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10);
-  
-  res.json({
-    summary: {
-      totalVisitors,
-      totalPageViews,
-      averagePageViews: (totalPageViews / totalVisitors || 0).toFixed(2),
-      uniqueCountries: countries.length,
-      uniqueDevices: Object.keys(deviceStats).length
-    },
-    deviceStats,
-    topCountries: Object.fromEntries(topCountries),
-    recentVisitors: visitors
-      .sort((a, b) => new Date(b.lastVisit) - new Date(a.lastVisit))
-      .slice(0, 20)
-      .map(v => ({
-        ip: v.ip,
-        location: `${v.location?.city || ''}, ${v.location?.country || ''}`,
-        device: v.device,
-        pageViews: v.pageViews,
-        firstVisit: v.firstVisit,
-        lastVisit: v.lastVisit,
-        actions: (v.actions || []).length
-      }))
-  });
-});
-
-/**
- * Analytics Dashboard HTML Page
- */
-app.get('/analytics', (req, res) => {
-  const password = req.query.pwd || '';
-  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'spa123';
-  
-  // If no password provided, show login page
-  if (password !== ADMIN_PASSWORD) {
-    return res.send(`
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Spa Analytics - Login</title>
-        <style>
-          body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-          }
-          .login-box {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            width: 90%;
-            max-width: 400px;
-          }
-          h1 { 
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-          }
-          input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0 20px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            box-sizing: border-box;
-          }
-          button {
-            width: 100%;
-            padding: 12px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: bold;
-          }
-          button:hover { background: #764ba2; }
-          .error { color: red; margin-top: 10px; }
-        </style>
-      </head>
-      <body>
-        <div class="login-box">
-          <h1>🔐 Spa Analytics</h1>
-          <form method="GET">
-            <input type="password" name="pwd" placeholder="Enter Admin Password" required>
-            <button type="submit">Login</button>
-          </form>
-          ${req.query.error ? '<p class="error">Invalid password</p>' : ''}
-        </div>
-      </body>
-      </html>
-    `);
-  }
-  
-  // Password correct, show analytics
-  res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Spa Analytics Dashboard</title>
-      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-      <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-          background: #f5f5f5;
-          padding: 20px;
-        }
-        .header {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          padding: 30px;
-          border-radius: 10px;
-          margin-bottom: 30px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-        h1 { font-size: 28px; }
-        .logout { background: white; color: #667eea; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; }
-        .logout:hover { opacity: 0.9; }
-        
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-          gap: 20px;
-          margin-bottom: 30px;
-        }
-        .stat-card {
-          background: white;
-          padding: 20px;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .stat-card h3 { color: #667eea; margin-bottom: 10px; font-size: 14px; }
-        .stat-card .number { font-size: 32px; font-weight: bold; color: #333; }
-        
-        .charts-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-          gap: 20px;
-          margin-bottom: 30px;
-        }
-        .chart-container {
-          background: white;
-          padding: 20px;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .chart-container h3 { margin-bottom: 20px; color: #333; }
-        
-        .visitors-table {
-          background: white;
-          border-radius: 10px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-          overflow: hidden;
-        }
-        .visitors-table h3 { padding: 20px; padding-bottom: 10px; color: #333; }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        th {
-          background: #667eea;
-          color: white;
-          padding: 15px;
-          text-align: left;
-          font-weight: 600;
-        }
-        td {
-          padding: 15px;
-          border-bottom: 1px solid #eee;
-        }
-        tr:hover { background: #f9f9f9; }
-        
-        .refresh-btn {
-          background: #667eea;
-          color: white;
-          padding: 10px 20px;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          font-weight: bold;
-          margin-top: 10px;
-        }
-        .refresh-btn:hover { background: #764ba2; }
-        
-        @media (max-width: 768px) {
-          .charts-grid { grid-template-columns: 1fr; }
-          .header { flex-direction: column; gap: 15px; text-align: center; }
-        }
-      </style>
-    </head>
-    <body>
-      <div class="header">
-        <div>
-          <h1>📊 Spa Analytics Dashboard</h1>
-          <p>Visitor tracking and analytics</p>
-        </div>
-        <a href="/" class="logout">← Back to Site</a>
-      </div>
-      
-      <div class="stats-grid" id="stats"></div>
-      <div class="charts-grid" id="charts"></div>
-      <div class="visitors-table" id="visitors"></div>
-      <button class="refresh-btn" onclick="loadAnalytics()">🔄 Refresh</button>
-      
-      <script>
-        async function loadAnalytics() {
-          try {
-            const response = await fetch('/api/analytics?pwd=${password}');
-            const data = await response.json();
-            
-            if (data.error) {
-              alert('Error: ' + data.error);
-              return;
-            }
-            
-            // Update stats
-            const statsHtml = \`
-              <div class="stat-card">
-                <h3>Total Visitors</h3>
-                <div class="number">\${data.summary.totalVisitors}</div>
-              </div>
-              <div class="stat-card">
-                <h3>Total Page Views</h3>
-                <div class="number">\${data.summary.totalPageViews}</div>
-              </div>
-              <div class="stat-card">
-                <h3>Avg Views/Visitor</h3>
-                <div class="number">\${data.summary.averagePageViews}</div>
-              </div>
-              <div class="stat-card">
-                <h3>Unique Countries</h3>
-                <div class="number">\${data.summary.uniqueCountries}</div>
-              </div>
-              <div class="stat-card">
-                <h3>Device Types</h3>
-                <div class="number">\${data.summary.uniqueDevices}</div>
-              </div>
-            \`;
-            document.getElementById('stats').innerHTML = statsHtml;
-            
-            // Device chart
-            const deviceCtx = document.createElement('canvas');
-            const chartsDiv = document.getElementById('charts');
-            const deviceChartDiv = document.createElement('div');
-            deviceChartDiv.className = 'chart-container';
-            deviceChartDiv.innerHTML = '<h3>Visitors by Device</h3>';
-            deviceChartDiv.appendChild(deviceCtx);
-            chartsDiv.innerHTML = '';
-            chartsDiv.appendChild(deviceChartDiv);
-            
-            new Chart(deviceCtx, {
-              type: 'doughnut',
-              data: {
-                labels: Object.keys(data.deviceStats),
-                datasets: [{
-                  data: Object.values(data.deviceStats),
-                  backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe']
-                }]
-              },
-              options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
-            });
-            
-            // Top countries chart
-            const countriesCtx = document.createElement('canvas');
-            const countriesChartDiv = document.createElement('div');
-            countriesChartDiv.className = 'chart-container';
-            countriesChartDiv.innerHTML = '<h3>Top Countries</h3>';
-            countriesChartDiv.appendChild(countriesCtx);
-            chartsDiv.appendChild(countriesChartDiv);
-            
-            new Chart(countriesCtx, {
-              type: 'bar',
-              data: {
-                labels: Object.keys(data.topCountries),
-                datasets: [{
-                  label: 'Visitors',
-                  data: Object.values(data.topCountries),
-                  backgroundColor: '#667eea'
-                }]
-              },
-              options: { 
-                responsive: true, 
-                indexAxis: 'y',
-                plugins: { legend: { display: false } }
-              }
-            });
-            
-            // Visitors table
-            const visitorsHtml = \`
-              <h3>Recent Visitors</h3>
-              <table>
-                <thead>
-                  <tr>
-                    <th>IP Address</th>
-                    <th>Location</th>
-                    <th>Device</th>
-                    <th>Page Views</th>
-                    <th>Actions</th>
-                    <th>Last Visit</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  \${data.recentVisitors.map(v => \`
-                    <tr>
-                      <td>\${v.ip}</td>
-                      <td>\${v.location}</td>
-                      <td>\${v.device}</td>
-                      <td>\${v.pageViews}</td>
-                      <td>\${v.actions}</td>
-                      <td>\${new Date(v.lastVisit).toLocaleString()}</td>
-                    </tr>
-                  \`).join('')}
-                </tbody>
-              </table>
-            \`;
-            document.getElementById('visitors').innerHTML = visitorsHtml;
-          } catch (error) {
-            console.error('Error loading analytics:', error);
-            alert('Error loading analytics: ' + error.message);
-          }
-        }
-        
-        // Load on page load
-        loadAnalytics();
-      </script>
-    </body>
-    </html>
-  `);
-});
-
 // ============================================================================
 // SERVER INITIALIZATION
 // ============================================================================
@@ -1455,12 +1273,14 @@ const server = app.listen(PORT, () => {
   console.log(`${'='.repeat(70)}`);
   console.log(`\n✓ Server running on http://localhost:${PORT}`);
   console.log(`✓ Health Check: http://localhost:${PORT}/api/health`);
+  console.log(`✓ Analytics: http://localhost:${PORT}/api/admin/analytics?pwd=spa123`);
   console.log('\n📍 Service: Deep Tissue & Aromatic Oil Therapy');
   console.log('👩‍⚕️ Therapist: Certified Expert Therapist Mani');
   console.log('📍 Locations: Chennai (Primary) | Gachibowli, Hyderabad (Legacy)');
   console.log('\nAvailable Endpoints:');
   console.log('  GET  / - Home page');
   console.log('  GET  /api/health - Server health status');
+  console.log('  GET  /api/admin/analytics?pwd=spa123 - Comprehensive analytics');
   console.log('  GET  /api/home-data - Spa information');
   console.log('  GET  /api/services - Services list');
   console.log('  GET  /api/therapist-info - Therapist details');
